@@ -5,19 +5,9 @@ This bundle contains what has been built so far:
 - `index.html` — the interactive FORMALQ black-glass dashboard demo (single file, no dependencies, works offline)
 - `FORMALQ-build-prompt.md` — the full project specification for the complete Next.js + Supabase app (NOT yet built)
 
-## Run it on your MacBook
+## Run it on your browser
 
-Option 1 (simplest): double-click `index.html`, or in Terminal:
-
-    cd formalq-demo
-    open index.html
-
-Option 2 (local server, works the same):
-
-    cd formalq-demo
-    python3 -m http.server 8000
-
-Then open http://localhost:8000 in your browser.
+https://laughing-form-genius-flow.base44.app/
 
 ## What the demo does
 
