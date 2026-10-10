@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FORMALQ — Interactive Demo</title>
+<style>
+:root{--bg:#08090D;--bg2:#101116;--glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.07);--bd:rgba(255,255,255,.1);--tx:#F5F5F7;--tx2:#A1A1AA;--tx3:#71717A;--vio:#8B5CF6;--blu:#60A5FA;--ok:#34D399;--warn:#FBBF24;--err:#F87171;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;background-image:radial-gradient(600px 400px at 85% -5%,rgba(139,92,246,.22),transparent 70%),radial-gradient(500px 400px at 10% 105%,rgba(96,165,250,.13),transparent 70%);background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:230px;flex-shrink:0;padding:20px 14px;background:rgba(16,17,22,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-right:1px solid var(--bd);display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.06em;padding:4px 10px 18px}
+.logo i{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--vio),var(--blu));display:grid;place-items:center;font-style:normal;font-size:15px}
+.nav{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;color:var(--tx2);font-size:14px;transition:.2s;background:none;border:0}
+.nav:hover{background:var(--glass);color:var(--tx)}
+.nav.on{background:var(--glass2);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+.user{margin-top:auto;display:flex;gap:10px;align-items:center;padding:10px;border-radius:12px;background:var(--glass);border:1px solid var(--bd);font-size:13px}
+.user button{background:none;border:0;color:var(--tx3);padding:0;text-decoration:underline;font-size:12px}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blu),var(--vio));display:grid;place-items:center;font-weight:600;flex-shrink:0}
+.mnav{display:none;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--bd)}
+.mnav .nav{width:auto;white-space:nowrap}
+main{flex:1;min-width:0;padding:28px 32px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+h1{margin:0 0 4px;font-size:26px;font-weight:650}
+.sub{color:var(--tx2);font-size:14px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 16px;border-radius:12px;font-size:14px;border:1px solid var(--bd);background:var(--glass2);font-weight:500;transition:.2s}
+.btn.p{background:linear-gradient(135deg,var(--vio),#6D5AF0);border-color:transparent}
+.btn.sm{padding:6px 10px;font-size:12px;border-radius:9px}
+.btn.d{color:var(--err)}
+.btn:hover{transform:translateY(-1px);background:var(--glass2)}
+.btn.p:hover{background:linear-gradient(135deg,var(--vio),#6D5AF0)}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.card{background:var(--glass);border:1px solid var(--bd);border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05)}
+.m{padding:16px}.m small{color:var(--tx2);font-size:12px;display:block;margin-bottom:10px}.m b{font-size:28px;font-weight:650}
+.row{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-bottom:22px}
+.pad{padding:18px;margin-bottom:14px}
+h2{margin:0 0 14px;font-size:15px;font-weight:600}
+.fc{padding:14px 0;border-top:1px solid var(--bd)}
+.fc:first-child{border-top:0;padding-top:0}
+.fh{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+.fc p{margin:2px 0 0;color:var(--tx3);font-size:12px}
+.tag{font-size:11px;padding:3px 9px;border-radius:99px;border:1px solid var(--bd);white-space:nowrap}
+.published{color:var(--ok);background:rgba(52,211,153,.1)}.draft{color:var(--warn);background:rgba(251,191,36,.1)}.archived{color:var(--tx3)}
+.ai{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(96,165,250,.1))}
+.ai p{color:var(--tx2);font-size:13px;line-height:1.55;margin:0 0 10px}
+.note{margin-top:18px;font-size:12px;color:var(--tx3);text-align:center}
+input,select,textarea{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px;color:var(--tx);padding:10px 12px;font:inherit;font-size:14px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blu);outline-offset:2px}
+label{display:block;font-size:12px;color:var(--tx2);margin:12px 0 6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--glass);font-size:13px}
+label.chip{display:inline-flex;gap:6px;align-items:center;margin:0;cursor:pointer;color:var(--tx)}.chip:has(input:checked){background:rgba(139,92,246,.25);border-color:var(--vio)}.chip input{width:auto}
+.chip.on{background:rgba(139,92,246,.25);border-color:var(--vio)}
+.bar{height:8px;border-radius:9px;background:var(--glass2);overflow:hidden;margin:14px 0}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vio),var(--blu));animation:fill 1.2s linear forwards}
+@keyframes fill{to{width:100%}}
+.q{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.q input[type=text]{flex:1;min-width:160px}.q select{width:140px}.q label{display:flex;gap:4px;align-items:center;margin:0}.q input[type=checkbox]{width:auto}
+.hb{display:flex;align-items:center;gap:8px;font-size:12px;margin:6px 0}.hb span:first-child{width:16px}.hb div{flex:1;height:14px;background:var(--glass2);border-radius:5px;overflow:hidden}.hb i{display:block;height:100%;background:linear-gradient(90deg,var(--vio),var(--blu))}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:grid;place-items:center;padding:16px;z-index:10;overflow:auto}
+.md{width:100%;max-width:640px;max-height:90vh;overflow:auto;background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:20px}
+.md pre{white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.4);padding:12px;border-radius:10px;font-size:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--bg2);border:1px solid var(--bd);padding:10px 16px;border-radius:12px;font-size:13px;z-index:20;max-width:90vw}
+.center{min-height:100vh;display:grid;place-items:center;text-align:center;padding:20px}
+.empty{padding:26px;text-align:center;color:var(--tx2);font-size:14px}
+@media(max-width:820px){.side{display:none}.mnav{display:flex}.app{flex-direction:column}main{padding:20px 16px}.row{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="modal"></div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TYPES=['Short text','Long text','Single choice','Multiple choice','Dropdown','Rating','Yes/no','Number','Email','Date'];
+let uid=10;
+const S={out:false,view:'overview',q:'',f:'all',name:'Alex Rivera',notif:true,sel:'f1',gen:null,busy:false,topic:'',n:5,tone:'Friendly',ed:null,
+forms:[
+{id:'f1',title:'Student Feedback — Semester 2',desc:'Collect feedback on courses and teaching.',status:'published',resp:142,base:142,upd:'2 hours ago',qs:[{t:'How would you rate the course?',type:'Rating',req:true},{t:'What should we improve?',type:'Long text',req:false}]},
+{id:'f2',title:'College Event Registration',desc:'Sign-ups for the annual tech fest.',status:'published',resp:388,base:388,upd:'Yesterday',qs:[{t:'Full name',type:'Short text',req:true},{t:'Email',type:'Email',req:true}]},
+{id:'f3',title:'Product Feedback Survey',desc:'Early feedback on the new app.',status:'draft',resp:0,upd:'3 days ago',qs:[{t:'How easy was it to get started?',type:'Rating',req:true}]}]};
+const NAV=[['overview','Overview'],['forms','My Forms'],['create','Create with AI'],['analytics','Analytics'],['settings','Settings']];
+const get=id=>S.forms.find(f=>f.id===id);
+const toast=m=>{const t=$('#toast');t.innerHTML='<div class="toast" role="status">'+esc(m)+'</div>';clearTimeout(toast.h);toast.h=setTimeout(()=>t.innerHTML='',2800)};
+const link=f=>'https://formalq.example/f/'+f.id;
+function filtered(){return S.forms.filter(f=>(S.f==='all'||f.status===S.f)&&(f.title+' '+f.desc).toLowerCase().includes(S.q.toLowerCase()))}
+function formList(list){
+ if(!list.length)return '<div class="empty">No forms match. <br><br><button class="btn p" data-a="newform">+ Create New Form</button></div>';
+ return list.map(f=>`<div class="fc"><div class="fh"><div><b>${esc(f.title)}</b><p>${esc(f.desc)}</p><p>${f.resp} responses · Updated ${f.upd}</p></div><span class="tag ${f.status}">${f.status[0].toUpperCase()+f.status.slice(1)}</span></div>
+ <div class="btns">${f.status==='published'?`<button class="btn sm" data-a="copy" data-id="${f.id}">Copy link</button><button class="btn sm" data-a="fill" data-id="${f.id}">Answer</button>`:''}
+ <button class="btn sm" data-a="edit" data-id="${f.id}">Edit</button><button class="btn sm" data-a="preview" data-id="${f.id}">Preview</button><button class="btn sm" data-a="analytics" data-id="${f.id}">Analytics</button><button class="btn sm" data-a="dup" data-id="${f.id}">Duplicate</button>
+ <button class="btn sm" data-a="pub" data-id="${f.id}">${f.status==='published'?'Unpublish':'Publish'}</button><button class="btn sm" data-a="arch" data-id="${f.id}">${f.status==='archived'?'Restore':'Archive'}</button><button class="btn sm d" data-a="del" data-id="${f.id}">Delete</button></div></div>`).join('');
+}
+function dist(f){const r=f.base||0,w=[.05,.08,.17,.35,.35];let c=w.map(x=>Math.round(r*x));c[4]+=r-c.reduce((a,b)=>a+b,0);return c}
+function fillHtml(f){const o=q=>q.opts&&q.opts.length?q.opts:['Option 1','Option 2','Option 3'];const ch=(n,t,vals)=>'<div class="chips">'+vals.map(v=>`<label class="chip"><input type="${t}" name="${n}" value="${esc(v)}"> ${esc(v)}</label>`).join('')+'</div>';
+ return `<h2>${esc(f.title)}</h2><p class="sub">${esc(f.desc)} Answer the questions below. Fields marked * are required.</p><form id="ans" novalidate>${f.qs.map((q,i)=>{const n='q'+i,a=`aria-label="${esc(q.t)}"`;let c;
+  switch(q.type){case'Long text':c=`<textarea name="${n}" rows="3" ${a}></textarea>`;break;case'Rating':c=ch(n,'radio',['1','2','3','4','5']);break;case'Yes/no':c=ch(n,'radio',['Yes','No']);break;case'Single choice':c=ch(n,'radio',o(q));break;case'Multiple choice':c=ch(n,'checkbox',o(q));break;
+  case'Dropdown':c=`<select name="${n}" ${a}><option value="">Select…</option>${o(q).map(v=>`<option>${esc(v)}</option>`).join('')}</select>`;break;case'Number':c=`<input name="${n}" type="number" ${a}>`;break;case'Email':c=`<input name="${n}" type="email" ${a}>`;break;case'Date':c=`<input name="${n}" type="date" ${a}>`;break;default:c=`<input name="${n}" type="text" ${a}>`}
+  return `<label>${i+1}. ${esc(q.t)}${q.req?' *':''}</label>${c}`}).join('')||'<p class="sub">This form has no questions yet.</p>'}</form><div id="err" role="alert" style="color:var(--err);font-size:13px;margin-top:10px"></div><div class="btns" style="margin-top:14px"><button class="btn p" data-a="submit">Submit response</button><button class="btn" data-a="close">Cancel</button></div>`}
+function view(){
+ if(S.view==='overview'){const tot=S.forms.reduce((a,f)=>a+f.resp,0),pub=S.forms.filter(f=>f.status==='published').length;
+ return `<div class="top"><div><h1>Good evening, ${esc(S.name.split(' ')[0])}</h1><div class="sub">Create smarter forms. Understand every response.</div></div><div class="btns"><button class="btn" data-a="ai">✦ Generate with AI</button><button class="btn p" data-a="newform">+ Create New Form</button></div></div>
+ <div class="grid4"><div class="card m"><small>Total Forms</small><b>${S.forms.length}</b></div><div class="card m"><small>Total Responses</small><b>${tot}</b></div><div class="card m"><small>Published Forms</small><b>${pub}</b></div><div class="card m"><small>Avg. Completion Rate</small><b style="font-size:18px">Not enough data</b></div></div>
+ <div class="row"><div class="card pad"><h2>Response trend (sample)</h2><svg viewBox="0 0 520 150" style="width:100%" role="img" aria-label="Sample trend"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5CF6" stop-opacity=".45"/><stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/></linearGradient></defs><path d="M0 120 L60 100 L120 108 L180 70 L240 80 L300 48 L360 60 L420 30 L480 38 L520 20 L520 150 L0 150Z" fill="url(#g)"/><path d="M0 120 L60 100 L120 108 L180 70 L240 80 L300 48 L360 60 L420 30 L480 38 L520 20" fill="none" stroke="#8B5CF6" stroke-width="2.5"/></svg></div>
+ <div class="card pad ai"><h2>✦ AI insight</h2><p>Analyze a form's responses to get themes and suggestions.</p><button class="btn" data-a="analyze" data-id="f1">Analyze with AI</button></div></div>
+ <div class="card pad"><h2>Recent forms</h2>${formList(S.forms.slice(0,3))}</div>`}
+ if(S.view==='forms')return `<div class="top"><h1>My Forms</h1><div class="btns"><button class="btn" data-a="ai">✦ Generate with AI</button><button class="btn p" data-a="newform">+ Create New Form</button></div></div>
+ <input id="search" placeholder="Search forms…" aria-label="Search forms" value="${esc(S.q)}"><div class="chips">${['all','draft','published','archived'].map(k=>`<button class="chip ${S.f===k?'on':''}" data-a="filter" data-id="${k}">${k[0].toUpperCase()+k.slice(1)}</button>`).join('')}</div><div class="card pad" id="list">${formList(filtered())}</div>`;
+ if(S.view==='create'){
+ const tpls=['Student Feedback','College Event Registration','Customer Satisfaction','Market Research','Employee Survey','Course Feedback','Product Feedback','Job Application Screening'];
+ return `<div class="top"><h1>Create with AI</h1></div><div class="card pad"><label>Start from a template</label><div class="chips">${tpls.map(t=>`<button class="chip" data-a="tpl" data-id="${t}">${t}</button>`).join('')}</div>
+ <label for="topic">Form title or topic</label><input id="topic" value="${esc(S.topic)}" placeholder="e.g. Hackathon feedback">
+ <label for="nq">Number of questions</label><select id="nq">${[3,5,7,8].map(n=>`<option ${S.n==n?'selected':''}>${n}</option>`).join('')}</select>
+ <label for="tone">Tone</label><select id="tone">${['Friendly','Professional','Casual'].map(n=>`<option ${S.tone==n?'selected':''}>${n}</option>`).join('')}</select><br>
+ <button class="btn p" data-a="gen" ${S.busy?'disabled':''}>${S.busy?'Generating…':'✦ Generate questions'}</button>
+ ${S.busy?'<div class="bar"><i></i></div>':''}</div>
+ ${S.gen?`<div class="card pad"><h2>${esc(S.gen.title)}</h2><p class="sub">Demo generator: template questions built locally. No AI was called.</p>${S.gen.qs.map(q=>`<div class="q"><span>•</span><span style="flex:1">${esc(q.t)}</span><span class="tag">${q.type}</span></div>`).join('')}<div class="btns"><button class="btn p" data-a="fillgen">Answer these questions</button><button class="btn" data-a="gen">Regenerate</button><button class="btn" data-a="savegen">Save as draft</button></div></div>`:''}`}
+ if(S.view==='analytics'){const f=get(S.sel)||S.forms[0];const d=f?dist(f):[];const mx=Math.max(1,...d);
+ return `<div class="top"><h1>Analytics</h1></div><label for="fsel">Form</label><select id="fsel">${S.forms.map(x=>`<option value="${x.id}" ${f&&x.id===f.id?'selected':''}>${esc(x.title)}</option>`).join('')}</select><br><br>
+ ${!f?'<div class="empty card">No forms yet.</div>':f.resp===0?'<div class="empty card">No responses yet for this form.</div>':(f.base||0)>0?`<div class="card pad"><h2>Rating distribution · ${f.base} sample responses</h2>${d.map((c,i)=>`<div class="hb"><span>${i+1}★</span><div><i style="width:${c/mx*100}%"></i></div><span>${c}</span></div>`).join('')}<p class="sub">Average: ${(d.reduce((a,c,i)=>a+c*(i+1),0)/f.base).toFixed(2)} / 5</p></div>`:''}
+ ${f&&f.answers&&f.answers.length?`<div class="card pad"><h2>Responses submitted in this session (${f.answers.length})</h2>${f.answers.slice(0,5).map(a=>`<div class="fc"><p>${esc(a.at)}</p>${f.qs.map((q,i)=>`<p style="color:var(--tx)">${esc(q.t)}<br><span style="color:var(--tx2)">${esc(a.vals[i]||'—')}</span></p>`).join('')}</div>`).join('')}</div>`:''}${f?`<div class="btns"><button class="btn" data-a="analyze" data-id="${f.id}">Analyze with AI</button><button class="btn" data-a="csv" data-id="${f.id}">Export CSV</button></div>`:''}`}
+ return `<div class="top"><h1>Settings</h1></div><div class="card pad"><label for="nm">Display name</label><input id="nm" value="${esc(S.name)}"><label style="display:flex;gap:8px;align-items:center"><input id="nt" type="checkbox" style="width:auto" ${S.notif?'checked':''}> Email me when a form gets responses</label><br><button class="btn p" data-a="savesettings">Save settings</button></div>`;
+}
+function render(){
+ if(S.out){$('#app').innerHTML='<div class="center"><div><div class="logo" style="justify-content:center"><i>✦</i>FORMALQ</div><h1>You are signed out</h1><p class="sub">This is a demo: no real account is used.</p><button class="btn p" data-a="login">Log in (demo)</button></div></div>';return}
+ const nav=NAV.map(([k,l])=>`<button class="nav ${S.view===k?'on':''}" data-a="nav" data-id="${k}">${l}</button>`).join('');
+ $('#app').innerHTML=`<div class="app"><aside class="side"><div class="logo"><i>✦</i>FORMALQ</div>${nav}<div class="user"><div class="av">${esc(S.name[0]||'?')}</div><div>${esc(S.name)}<br><button data-a="signout">Sign out</button></div></div></aside>
+ <div style="flex:1;min-width:0"><div class="mnav">${nav}<button class="nav" data-a="signout">Sign out</button></div><main>${view()}<div class="note">Interactive demo with in-memory sample data. Nothing is saved to a database and no AI is called.</div></main></div></div>`;
+}
+function modal(h){$('#modal').innerHTML=h?`<div class="ov" data-a="bg"><div class="md" role="dialog" aria-modal="true">${h}</div></div>`:''}
+function edModal(){const e=S.ed;modal(`<h2>Edit form</h2><label>Title</label><input data-i="title" value="${esc(e.title)}"><label>Description</label><input data-i="desc" value="${esc(e.desc)}"><label>Questions</label>
+${e.qs.map((q,i)=>`<div class="q"><input type="text" data-qi="${i}" data-k="t" value="${esc(q.t)}" aria-label="Question ${i+1}"><select data-qi="${i}" data-k="type">${TYPES.map(t=>`<option ${t===q.type?'selected':''}>${t}</option>`).join('')}</select>${/choice|Dropdown/.test(q.type)?`<input type="text" data-qi="${i}" data-k="opts" value="${esc((q.opts||[]).join(', '))}" placeholder="Options, comma separated" aria-label="Options for question ${i+1}">`:''}<label><input type="checkbox" data-qi="${i}" data-k="req" ${q.req?'checked':''}>Req.</label><button class="btn sm" data-a="up" data-id="${i}" aria-label="Move up">↑</button><button class="btn sm" data-a="down" data-id="${i}" aria-label="Move down">↓</button><button class="btn sm" data-a="dupq" data-id="${i}">Copy</button><button class="btn sm d" data-a="rmq" data-id="${i}">✕</button></div>`).join('')||'<p class="sub">No questions yet.</p>'}
+<div class="btns" style="margin-top:12px"><button class="btn" data-a="addq">+ Add question</button><button class="btn p" data-a="saveedit">Save</button><button class="btn" data-a="close">Cancel</button></div>`)}
+const csvCell=v=>{v=String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+function act(a,id){
+ const f=get(id);
+ switch(a){
+ case'nav':S.view=id;render();break;
+ case'signout':S.out=true;render();break;
+ case'login':S.out=false;render();break;
+ case'ai':S.view='create';render();break;
+ case'newform':{const n={id:'f'+(++uid),title:'Untitled form',desc:'',status:'draft',resp:0,upd:'Just now',qs:[]};S.forms.unshift(n);S.ed=JSON.parse(JSON.stringify(n));edModal();render();toast('New draft created (demo)');break}
+ case'filter':S.f=id;render();break;
+ case'copy':navigator.clipboard&&navigator.clipboard.writeText(link(f)).then(()=>toast('Demo link copied: '+link(f)),()=>toast('Demo link: '+link(f)));if(!navigator.clipboard)toast('Demo link: '+link(f));break;
+ case'edit':S.ed=JSON.parse(JSON.stringify(f));edModal();break;
+ case'preview':modal(`<h2>${esc(f.title)}</h2><p class="sub">${esc(f.desc)}</p>${f.qs.map((q,i)=>`<label>${i+1}. ${esc(q.t)}${q.req?' *':''}</label>${q.type==='Long text'?'<textarea rows="2"></textarea>':q.type==='Rating'?'<div class="chips">'+[1,2,3,4,5].map(n=>'<span class="chip">'+n+'★</span>').join('')+'</div>':q.type==='Yes/no'?'<div class="chips"><span class="chip">Yes</span><span class="chip">No</span></div>':q.type.includes('choice')||q.type==='Dropdown'?'<select><option>Option 1</option><option>Option 2</option></select>':`<input placeholder="${q.type}">`}`).join('')||'<p class="sub">No questions yet.</p>'}<div class="btns" style="margin-top:14px"><button class="btn" data-a="close">Close preview</button></div>`);break;
+ case'analytics':S.sel=id;S.view='analytics';modal('');render();break;
+ case'dup':S.forms.unshift({...JSON.parse(JSON.stringify(f)),id:'f'+(++uid),title:f.title+' (copy)',status:'draft',resp:0,upd:'Just now'});render();toast('Form duplicated');break;
+ case'pub':f.status=f.status==='published'?'draft':'published';f.upd='Just now';render();toast(f.status==='published'?'Published (demo)':'Unpublished');break;
+ case'arch':f.status=f.status==='archived'?'draft':'archived';f.upd='Just now';render();toast(f.status==='archived'?'Archived':'Restored as draft');break;
+ case'del':modal(`<h2>Delete form?</h2><p class="sub">“${esc(f.title)}” will be removed from this demo.</p><div class="btns"><button class="btn d" data-a="delok" data-id="${id}">Delete</button><button class="btn" data-a="close">Cancel</button></div>`);break;
+ case'delok':S.forms=S.forms.filter(x=>x.id!==id);modal('');render();toast('Form deleted');break;
+ case'tpl':S.topic=id;render();break;
+ case'gen':case'regen':{S.topic=$('#topic')?$('#topic').value:S.topic;S.n=+($('#nq')?$('#nq').value:S.n);S.tone=$('#tone')?$('#tone').value:S.tone;
+  if(!S.topic.trim()){toast('Enter a topic first');break}
+  S.busy=true;render();setTimeout(()=>{const t=S.topic.trim();const base=[[`How would you rate your overall experience with ${t}?`,'Rating'],[`What did you like most about ${t}?`,'Long text'],[`How did you hear about ${t}?`,'Single choice',['Social media','Friends','College notice','Other']],[`Would you recommend ${t} to others?`,'Yes/no'],[`What could we improve?`,'Long text'],[`How often do you engage with ${t}?`,'Dropdown',['Daily','Weekly','Monthly','Rarely']],[`Your email (optional)`,'Email'],[`When did you take part?`,'Date']];
+  S.gen={title:t+' Feedback ('+S.tone+')',qs:base.slice(0,S.n).map(([x,type,opts],i)=>({t:x,type,opts,req:i<2}))};S.busy=false;render()},1200);break}
+ case'savegen':{S.forms.unshift({id:'f'+(++uid),title:S.gen.title,desc:'Generated in demo mode.',status:'draft',resp:0,upd:'Just now',qs:S.gen.qs});S.gen=null;S.topic='';S.view='forms';render();toast('Saved as draft (demo)');break}
+ case'fill':S.fid=id;modal(fillHtml(f));break;
+ case'fillgen':{if(!S.gen.savedId){const n={id:'f'+(++uid),title:S.gen.title,desc:'Generated in demo mode.',status:'published',resp:0,upd:'Just now',qs:S.gen.qs,answers:[]};S.forms.unshift(n);S.gen.savedId=n.id}render();act('fill',S.gen.savedId);break}
+ case'submit':{const f2=get(S.fid);if(!f2||f2.status!=='published'){toast('Submission rejected: form is not published');break}
+  const fd=new FormData($('#ans')),vals=[],errs=[];
+  f2.qs.forEach((q,i)=>{const n='q'+i;let v=q.type==='Multiple choice'?fd.getAll(n):(fd.get(n)||'');if(typeof v==='string')v=v.trim();const empty=Array.isArray(v)?!v.length:v==='';
+   if(empty){if(q.req)errs.push('Question '+(i+1)+' is required.')}
+   else if(q.type==='Email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))errs.push('Question '+(i+1)+' needs a valid email.')
+   else if(q.type==='Number'&&isNaN(Number(v)))errs.push('Question '+(i+1)+' needs a number.');
+   vals.push(Array.isArray(v)?v.join('; '):v)});
+  if(errs.length){$('#err').innerHTML=errs.map(esc).join('<br>');break}
+  (f2.answers=f2.answers||[]).unshift({at:new Date().toLocaleString(),vals});f2.resp++;f2.upd='Just now';render();
+  modal(`<h2>Thank you!</h2><p class="sub">Your response was recorded in this demo (in memory only).</p><div class="btns"><button class="btn p" data-a="analytics" data-id="${f2.id}">View in analytics</button><button class="btn" data-a="close">Close</button></div>`);break}
+ case'analyze':{if(f.resp<5){modal('<h2>Too few responses</h2><p class="sub">“'+esc(f.title)+'” has '+f.resp+' responses. At least 5 are needed for a meaningful analysis.</p><button class="btn" data-a="close">Close</button>');break}
+  modal(`<h2>✦ Analysis — ${esc(f.title)}</h2><p class="sub"><b>Demo sample:</b> this text is pre-written. No AI was called and no real answers were analyzed.</p><p><b>Calculated:</b> ${f.resp} responses, ${f.base?'sample average rating '+(dist(f).reduce((a,c,i)=>a+c*(i+1),0)/f.base).toFixed(2)+'/5':'no sample ratings'}.</p><p><b>Sample interpretation:</b> Respondents are mostly positive. A recurring theme is a request for clearer scheduling.</p><button class="btn" data-a="close">Close</button>`);break}
+ case'csv':{const real=f.answers||[];const head=['Submitted',...f.qs.map(q=>q.t)];const rows=[head];if(real.length)real.slice().reverse().forEach(a=>rows.push([a.at,...a.vals]));else for(let i=0;i<Math.min(f.resp,5);i++)rows.push(['2026-10-0'+(i+1),...f.qs.map(()=>'Sample answer '+(i+1))]);
+  S.csv=rows.map(r=>r.map(csvCell).join(',')).join('\n');modal(`<h2>CSV export</h2><p class="sub">${real.length?'Your submitted answers.':'Sample rows (demo data).'} Downloads are disabled in this preview, so copy the text below.</p><pre>${esc(S.csv)}</pre><div class="btns"><button class="btn p" data-a="copycsv">Copy CSV</button><button class="btn" data-a="close">Close</button></div>`);break}
+ case'copycsv':navigator.clipboard?navigator.clipboard.writeText(S.csv).then(()=>toast('CSV copied'),()=>toast('Copy failed: select the text manually')):toast('Copy unavailable: select the text manually');break;
+ case'savesettings':S.name=$('#nm').value.trim()||S.name;S.notif=$('#nt').checked;render();toast('Settings saved (demo)');break;
+ case'addq':S.ed.qs.push({t:'New question',type:'Short text',req:false});edModal();break;
+ case'rmq':S.ed.qs.splice(+id,1);edModal();break;
+ case'dupq':S.ed.qs.splice(+id+1,0,{...S.ed.qs[+id]});edModal();break;
+ case'up':case'down':{const i=+id,j=a==='up'?i-1:i+1;if(j>=0&&j<S.ed.qs.length){[S.ed.qs[i],S.ed.qs[j]]=[S.ed.qs[j],S.ed.qs[i]]}edModal();break}
+ case'saveedit':{const t=get(S.ed.id);Object.assign(t,{title:S.ed.title.trim()||'Untitled form',desc:S.ed.desc,qs:S.ed.qs,upd:'Just now'});modal('');render();toast('Saved (demo, in memory)');break}
+ case'close':modal('');break;
+ }
+}
+document.addEventListener('click',e=>{if(e.target.classList.contains('ov')){modal('');return}const b=e.target.closest('[data-a]');if(b&&b.dataset.a!=='bg')act(b.dataset.a,b.dataset.id)});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.id==='search'){S.q=t.value;$('#list').innerHTML=formList(filtered())}
+ else if(t.dataset.i)S.ed[t.dataset.i]=t.value;
+ else if(t.dataset.qi!==undefined){const k=t.dataset.k;S.ed.qs[+t.dataset.qi][k]=k==='opts'?t.value.split(',').map(x=>x.trim()).filter(Boolean):t.type==='checkbox'?t.checked:t.value}});
+document.addEventListener('change',e=>{if(e.target.id==='fsel'){S.sel=e.target.value;render()}if(e.target.dataset.k==='type')edModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')modal('')});
+render();
+</script>
+</body>
+</html>
